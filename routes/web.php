@@ -13,6 +13,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('starting_page');
 });
+
+Route::get('/info', function () {
+    return view('info');
+});
+
+// Route::get('/test/{name}/foo/{age}', 'HobbyController@test');
+
+Route::resource('hobby', 'HobbyController');
+Route::resource('tag', 'TagController');
+Route::resource('user', 'UserController');
+
+Route::get('/hobby/tag/{tag_id}', 'HobbyTagController@getFilteredHobbies')->name('hobby_tag');
+
+// attach/detach tags to hobbies
+Route::get('/hobby/{hobby_id}/tag/{tag_id}/attach', 'HobbyTagController@attachTag');
+Route::get('/hobby/{hobby_id}/tag/{tag_id}/detach', 'HobbyTagController@detachTag');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+
