@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Hobby;
 use App\Tag;
 use Illuminate\Support\Facades\Session;
+use Intervention\Image\Facades\Image;
 
 use Illuminate\Http\Request;
 
@@ -55,7 +56,8 @@ class HobbyController extends Controller
         // validate the form data
         $request->validate([
             'name' => 'required|min:3',
-            'description' => 'required|min:5'
+            'description' => 'required|min:5',
+            'image' => 'mimes:jpeg,jpg,bmp,png,gif'
         ]);
 
         // process the data and submit it
@@ -66,9 +68,13 @@ class HobbyController extends Controller
         ]);
 
         $hobby->save();
+
+        if($request->image){
+            $this->saveImages($request->image, $hobby->id);
+        }
         
         // return $this->index()->with(['message_success' => "The hobby <b>" .$hobby->name. "</b> was created."]);
-        return redirect('/hobby' . $hobby->id)->with(['message_warning' => "Please assign some tags now."]);
+        return redirect('/hobby/' . $hobby->id)->with(['message_warning' => "Please assign some tags now."]);
 
         // // if successful we want to redirect
         // if ($hobby->save()) {
@@ -106,7 +112,11 @@ class HobbyController extends Controller
      */
     public function edit(Hobby $hobby)
     {
-        return view('hobby.edit')->with(['hobby' => $hobby]);
+        return view('hobby.edit')->with([
+            'hobby' => $hobby,
+            'message_success' => Session::get('message_success'),
+            'message_warning' => Session::get('message_warning')
+        ]);
     }
 
     /**
@@ -121,8 +131,13 @@ class HobbyController extends Controller
         // validate the form data
         $request->validate([
             'name' => 'required|min:3',
-            'description' => 'required|min:5'
+            'description' => 'required|min:5',
+            'image' => 'mimes:jpeg,jpg,bmp,png,gif'
         ]);
+
+        if($request->image){
+            $this->saveImages($request->image, $hobby->id);
+        }
 
         // update data
         $hobby->update([
@@ -147,6 +162,44 @@ class HobbyController extends Controller
         return $this->index()->with(['message_success' => "The hobby <b>" .$oldName. "</b> was deleted."]);
 
     }
+
+    public function saveImages($imageInput, $hobby_id)
+    {
+        $image = Image::make($imageInput);
+        if($image->width() > $image->height()){ // landscape
+            $image->widen(1200)->save(public_path()."/img/hobbies/".$hobby_id."_large.jpg")
+                    ->widen(400)->pixelate(12)->save(public_path()."/img/hobbies/".$hobby_id."_pixelated.jpg");
+
+            $image = Image::make($imageInput);  
+            $image->widen(60)->save(public_path()."/img/hobbies/".$hobby_id."_thumb.jpg");
+        }else{ //portrait
+            $image->heighten(900)->save(public_path()."/img/hobbies/".$hobby_id."_large.jpg")
+                    ->heighten(400)->pixelate(12)->save(public_path()."/img/hobbies/".$hobby_id."_pixelated.jpg");
+
+            $image = Image::make($imageInput);  
+            $image->heighten(60)->save(public_path()."/img/hobbies/".$hobby_id."_thumb.jpg");
+        }
+
+    }
+
+    public function deleteImages($hobby_id)
+    {
+        if(file_exists('img/hobbies/'.$hobby_id.'_large.jpg')){
+            unlink(public_path()."/img/hobbies/".$hobby_id."_large.jpg");
+        }
+
+        if(file_exists('img/hobbies/'.$hobby_id.'_thumb.jpg')){
+            unlink(public_path()."/img/hobbies/".$hobby_id."_thumb.jpg");
+        }
+
+        if(file_exists('img/hobbies/'.$hobby_id.'_pixelated.jpg')){
+            unlink(public_path()."/img/hobbies/".$hobby_id."_pixelated.jpg");
+        }
+
+        return back()->with(['message_success' => "The Image was deleted."]);
+
+    }
+
 }
 
 

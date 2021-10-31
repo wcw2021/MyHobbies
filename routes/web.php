@@ -37,6 +37,12 @@ Route::get('/hobby/tag/{tag_id}', 'HobbyTagController@getFilteredHobbies')->name
 Route::get('/hobby/{hobby_id}/tag/{tag_id}/attach', 'HobbyTagController@attachTag');
 Route::get('/hobby/{hobby_id}/tag/{tag_id}/detach', 'HobbyTagController@detachTag');
 
+// delete image of hobby
+Route::get('/delete-images/hobby/{hobby_id}', 'HobbyController@deleteImages');
+
+// delete image of user
+Route::get('/delete-images/user/{user_id}', 'UserController@deleteImages');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
