@@ -26,9 +26,9 @@
                                     @endif
                                     &nbsp;<a title="Show Details" href="/hobby/{{ $hobby->id }}">{{ $hobby->name }}</a>
 
-                                    @auth
+                                    @can('update', $hobby)
                                     <a class="btn btn-sm btn-light ml-2" href="/hobby/{{ $hobby->id }}/edit"><i class="fas fa-edit"></i> Edit Hobby</a>
-                                    @endauth
+                                    @endcan
 
                                     <span class="mx-2">
                                         Posted by: <a href="/user/{{ $hobby->user->id }}">{{ $hobby->user->name }} ({{ $hobby->user->hobbies->count() }} Hobbies)</a>
@@ -38,13 +38,13 @@
                                         @endif
                                     </span>
 
-                                    @auth
+                                    @can('delete', $hobby)
                                     <form class="float-right" style="display: inline" action="/hobby/{{ $hobby->id }}" method="post">
                                         @csrf
                                         @method("DELETE")
                                         <input class="btn btn-sm btn-outline-danger" type="submit" value="Delete">
                                     </form>
-                                    @endauth
+                                    @endcan
                                     
                                     <span class="float-right mx-2">{{ $hobby->created_at->diffForHumans() }}</span>
                                     <br>

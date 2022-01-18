@@ -33,11 +33,11 @@
                                             </li>
                                         @endforeach
                                 </ul>
-                                @else
-                                    <p>
-                                        {{ $user->name }} has not created any hobbies yet.
-                                    </p>
-                                @endif
+                                    @else
+                                        <p>
+                                            {{ $user->name }} has not created any hobbies yet.
+                                        </p>
+                                    @endif
                             </div>
                             <div class="col-md-3">
                                 @if(Auth::user() && file_exists('img/users/'.$user->id.'_large.jpg'))
@@ -50,15 +50,17 @@
                             </div>
                         </div>
 
-
                     </div>
 
                 </div>
 
                 <div class="mt-4">
-                    <a class="btn btn-primary btn-sm" href="{{ URL::previous() }}"><i class="fas fa-arrow-circle-up"></i> Back to Overview</a>
+                    <a class="btn btn-primary btn-sm" href="/hobby"><i class="fas fa-arrow-circle-up"></i> Back to Hobbies</a>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+
+

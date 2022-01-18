@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Hobby;
+use App\Hobby; 
 use App\Tag;
 use Illuminate\Support\Facades\Session;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Gate;
+use Auth;
 
 use Illuminate\Http\Request;
 
 class HobbyController extends Controller
 {
-    public function __construct()
+    public function __construct()  
     {
         $this->middleware('auth')->except(['index', 'show']);
     }
@@ -59,7 +60,7 @@ class HobbyController extends Controller
             'name' => 'required|min:3',
             'description' => 'required|min:5',
             'image' => 'mimes:jpeg,jpg,bmp,png,gif'
-        ]);
+        ]);  
 
         // process the data and submit it
         $hobby = new Hobby([
@@ -75,7 +76,7 @@ class HobbyController extends Controller
         }
         
         // return $this->index()->with(['message_success' => "The hobby <b>" .$hobby->name. "</b> was created."]);
-        return redirect('/hobby/' . $hobby->id)->with(['message_warning' => "Please assign some tags now."]);
+        return redirect('/hobby/' . $hobby->id)->with(['message_warning' => "Please assign some tags now. (Optional)"]);
 
         // // if successful we want to redirect
         // if ($hobby->save()) {
@@ -88,7 +89,7 @@ class HobbyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Hobby  $hobby
+     * @param  \App\Hobby  $hobby 
      * @return \Illuminate\Http\Response
      */
     public function show(Hobby $hobby)
@@ -179,7 +180,7 @@ class HobbyController extends Controller
 
             $image = Image::make($imageInput);  
             $image->widen(60)->save(public_path()."/img/hobbies/".$hobby_id."_thumb.jpg");
-        }else{ //portrait
+        }else{ // portrait
             $image->heighten(900)->save(public_path()."/img/hobbies/".$hobby_id."_large.jpg")
                     ->heighten(400)->pixelate(12)->save(public_path()."/img/hobbies/".$hobby_id."_pixelated.jpg");
 
@@ -191,6 +192,11 @@ class HobbyController extends Controller
 
     public function deleteImages($hobby_id)
     {
+        $hobby = Hobby::findOrFail($hobby_id);
+        if ($hobby->user->id != Auth::id() && Auth::user()->role !== 'admin') {
+            return abort(403);
+        }
+
         if(file_exists('img/hobbies/'.$hobby_id.'_large.jpg')){
             unlink(public_path()."/img/hobbies/".$hobby_id."_large.jpg");
         }
@@ -208,6 +214,7 @@ class HobbyController extends Controller
     }
 
 }
+
 
 
 

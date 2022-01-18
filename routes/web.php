@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
 //     return view('welcome');
-// });
+// }); 
 
 Route::get('/', function () {
     return view('starting_page');
@@ -24,6 +24,8 @@ Route::get('/', function () {
 Route::get('/info', function () {
     return view('info');
 });
+
+Route::get('/home', 'HomeController@index')->name('home');
 
 // Route::get('/test/{name}/foo/{age}', 'HobbyController@test');
 
@@ -46,7 +48,8 @@ Route::get('/delete-images/user/{user_id}', 'UserController@deleteImages');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+
+
 
 
 

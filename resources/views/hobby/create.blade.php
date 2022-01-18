@@ -17,7 +17,7 @@
 
                             <div class="form-group">
                                 <label for="image">Image</label>
-                                <input type="file" class="form-control {{ $errors->has('image') ? 'border-danger' : '' }}" id="image" name="image" value="">
+                                <input type="file" class="form-control {{ $errors->has('image') ? 'border-danger' : '' }}" id="image" name="image" accept="image/*"> 
                                 <small class="form-text text-danger">{!! $errors->first('image') !!}</small>
                             </div>
 
@@ -35,5 +35,6 @@
         </div>
     </div>
 @endsection
+
 
 
